@@ -1,0 +1,360 @@
+-- JOIN:==>  
+
+-- All Types of JOIN down below:--
+
+-- 1) Join
+-- 2) Left Join 
+-- 3) Right Join 
+-- 4) Join Multiple Table
+-- 5) FULL JOIN
+-- 6) CROSS JOIN
+-- 7) NATURAL JOIN
+-- 8) SELF JOIN
+
+
+----------------------------------------------------------------------
+
+-- First - Create Table 01 - employee:-
+
+create table employee(
+	emp_id varchar(20),
+	emp_name varchar(50),
+	salary INTEGER,
+	dept_id varchar(20),
+	manager_id varchar(20)
+)
+
+
+-- Insert Value in this Table - employee:-
+
+insert into employee(emp_id, emp_name, salary, dept_id, manager_id)
+values
+('E1', 'Rahul', 15000, 'D1', 'M1'),
+('E2', 'Manoj', 15000, 'D1', 'M1'),
+('E3', 'James', 55000, 'D2', 'M2'),
+('E4', 'Michael', 25000, 'D2', 'M2'),
+('E5', 'Ali', 20000, 'D10', 'M3'),
+('E6', 'Robin', 35000, 'D10', 'M3')
+
+----------------------------------------------------
+
+-- Create Table 02 - department
+
+create table department(
+	dept_id varchar(20),
+	dept_name varchar(50)
+)
+
+-- Insert Value in this Table - department
+
+insert into department(dept_id, dept_name)
+values
+('D1', 'IT'),
+('D2', 'HR'),
+('D3', 'Finance'),
+('D4', 'Admin')
+
+--------------------------------------------------------
+
+-- Create Table 03 - manager
+
+create table manager(
+	manager_id varchar(20),
+	manager_name varchar(50),
+	dept_id varchar(20)
+)
+
+
+-- Insert Value in this Table - manager
+
+insert into manager(manager_id, manager_name, dept_id)
+values
+('M1', 'Prem', 'D3'),
+('M2', 'Shripadh', 'D4'),
+('M3', 'Nick', 'D1'),
+('M4', 'Cory', 'D1')
+
+-----------------------------------------------------------
+
+-- Create Table 04 - projects
+
+create table projects(
+	project_id varchar(20),
+	project_name varchar(100),
+	team_member_id varchar(20)
+)
+
+
+-- Insert Value in this Table - projects
+
+insert into projects(project_id, project_name, team_member_id)
+values
+('P1', 'Data Migration', 'E1'),
+('P1', 'Data Migration', 'E2'),
+('P1', 'Data Migration', 'M3'),
+('P2', 'ETL Tool', 'E1'),
+('P2', 'ETL Tool', 'M4')
+
+----------------------------------------------------
+
+-- Create Table 05 - family
+
+create table family(
+	member_id varchar(50),
+	name varchar(60),
+	age integer,
+	parent_id varchar(50)
+)
+
+
+-- Insert Value in this Table - family
+
+insert into family(member_id, name, age, parent_id)
+values
+('F1', 'David', 4, 'F5'),
+('F2', 'carol', 10, 'F5'),
+('F3', 'Michael', 12, 'F5'),
+('F4', 'Johnson', 36, ''),
+('F5', 'Maryam', 40, 'F6'),
+('F6', 'Stewart', 70, ''),
+('F7', 'Rohan', 6, 'F4'),
+('F8', 'Asha', 8, 'F4')
+
+
+--=======================================================================
+
+select * from employee;
+select * from department;
+select * from manager;
+select * from projects;
+
+--======================================================================
+
+-- 01 ==> INNER JOIN:==> OR - JOIN
+
+-- Q. Fetch the employee name and department name they belong to:-
+
+-- In these 2 Table has these 2 Columns - employee name and department name
+
+select * from employee;  -- D1, D2, D10
+select * from department;   -- D1, D2, D3, D4
+
+----------------------------------
+
+-- e.emp_name   ==> means emp_name come from employee table
+-- d.dept_name  ==> means dept_name come from department table
+
+-- e - is a Aliase for employee table
+-- d - is a Aliase for department table
+
+-- on - (Join Condition) means find which columns are common in 2 Table, based on that common table mane, you can Join(Value has to be similar in the commom column - Column name does not matter)
+
+
+--NOTE:====> What column you want to fetch, it should be write after 'select' and the common column name of 2 table should be write after 'on'
+
+
+
+select e.emp_name, d.dept_name
+from employee e join department d on e.dept_id = d.dept_id;   
+
+
+
+-- NOTE:- Which values are not common in 2 table, those will be excluded.
+-- Which values are common in both table, it will be taken.
+
+
+--================================================================================
+
+-- 02 ==> LEFT JOIN:==> OR LEFT OUTER JOIN
+
+-- Q. Fetch ALL the employee name and their department name they belong to:-
+
+-- NOTE:==> LEFT JOIN ==> It first do the INNER JOIN. Then it check any additional records left out in the Left Table and it include those Additional Records also.
+
+-- Left Table will get most priority here.
+
+
+
+select e.emp_name, d.dept_name
+from employee e left join department d on e.dept_id = d.dept_id;
+
+
+--================================================================================
+
+-- 03 ==> RIGHT JOIN:==> OR - RIGHT OUTER JOIN
+
+-- NOTE:==> RIGHT JOIN ==> It first do the INNER JOIN. Then it check any additional records left out in the Right Table and it include those Additional Records also.
+
+
+-- Right Table will get most priority here.
+
+
+
+select e.emp_name, d.dept_name
+from employee e right join department d on e.dept_id = d.dept_id;
+
+--==========================================================================
+
+--SUMMARY:-
+
+Inner Join  ==> Fetch Matching Records only
+
+Left Join  ==> (Inner Join + Addition Records from Left Table)
+
+Right Join  ==> (Inner Join + Addition Records from Right Table)
+
+
+--===============================================================================
+
+-- Join Multiple Table:===>
+
+
+-- Q. Fetch Details of All Employee name, their manager name, their Department name and the project they are work on
+
+-- Means I have to use these 4 Tables. Because, data is scattered in the 4 Table
+
+
+
+select e.emp_name, d.dept_name, m.manager_name, p.project_name
+from employee e
+left join department d on e.dept_id = d.dept_id
+join manager m on m.manager_id = e.manager_id
+left join projects p on p.team_member_id = e.emp_id  
+
+
+
+-- NOTE:==> When you write left join in Last Column, previous 3 Table will be treated as Left Table - (employee, department and manager Table are treated here as Left Table).
+
+-- Because, the Goal here to fetch All employee name.
+
+
+--========================================================================
+
+
+-- 04 ==> FULL OUTER JOIN:==> OR - FULL JOIN
+
+-- NOTE:==> FULL JOIN, first do the INNER Join, Then it will go to Left Table and check any addition records are left out, it will also include those Record.
+-- Then again it will go to Right Table and check any addition records are left out, it will also include those Record.
+
+-- Summary:==>
+
+-- FULL JOIN = INNER JOIN 
+--                      + All remaining record from left table
+--                      + All remaining record from Right table
+
+------------------------------
+
+select * from employee  -- D1, D2, D1o
+select * from department  -- D1, D2, D3, D4
+
+-------------------------------
+
+select e.emp_name, d.dept_name
+from employee e full join department d on e.dept_id = d.dept_id; 
+
+
+
+--========================================================================
+
+-- 05 ==> CROSS JOIN:==>  OR - CARTESIAN JOIN
+
+-- CROSS Join Returns Cartesian product (Means, every record from left side table will match with right side table)
+
+-- NOTE:- CROSS JOIN does not need any condition (Means, don't need any 'on' clause here)
+-- Because, It not going to join these 2 tables. It only going to match the records of 2 Tables.
+----------------------------------------
+
+select * from employee  -- It has 6 Records
+select * from department  -- It has 4 Records
+
+-- So, CROSS JOIN will do ===> 6 * 4 = 24 Records
+
+-----------------------------------------
+
+--Example:-
+
+
+select e.emp_name, d.dept_name
+from employee e cross join department d;
+
+
+--========================================================================================
+
+-- 06 ==> NATURAL JOIN:==> 
+
+-- Don't use Natural Join, because, you are giving the control to SQL to choose the column that should join.
+
+-- Natural Join is not Recommended.
+
+-- NOTE:- NATURAL JOIN does not need any condition (Means, don't need any 'on' clause here - Like CROSS JOIN)
+
+-- SQL will decide on which column it should join depand on column name (It will check, are there any column sharing the same name) ==> By using those same column, join will happen.
+
+
+
+select e.emp_name, d.dept_name
+from employee e natural join department d; 
+
+
+
+-- Mistake:==> When There Column Names may be same between 2 Tables, but Values in those column are different - and here Natural Join goes Wrong.
+
+
+
+--=================================================================================
+
+-- 07 ==> SELF JOIN:==> 
+
+-- When you join a Table to itself
+
+--Q. Write a Query to fetch the Child name and their age corresponding to their parent name
+
+
+select * from family
+
+------------------------------
+
+-- For SELF JOIN - We only use  - JOIN
+
+-- We are using the Same table Twice for Self Join
+
+
+
+select child.name as child_name,
+child.age as child_age,
+parent.name as parent_name,
+parent.age as parent_age
+from family as child
+join family as parent on child.parent_id = parent.member_id
+
+
+------------------------------------------------------
+
+-- You can also do Left Join here
+
+
+
+select child.name as child_name,
+child.age as child_age,
+parent.name as parent_name,
+parent.age as parent_age
+from family as child
+left join family as parent on child.parent_id = parent.member_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
